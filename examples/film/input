@@ -1,0 +1,37 @@
+# Parallelization
+Partition :	8 1 1
+
+# Mesh definition
+Lx :	80
+Ly :	10
+Lz :	80
+nx :	256
+ny :	32
+nz :	256
+
+# Fluid properties
+Density ratio :   816
+Viscosity ratio : 64
+
+# Ohnesorge number
+Oh : 0.1
+
+# Initial holes
+Number of holes : 1
+Size of holes :   10
+
+# Time integration
+Max timestep size : 5e-3
+Max cfl number :    1.2
+Max time :          10
+
+# Pressure solver
+Pressure tolerance : 1e-6
+Pressure iteration : 100
+
+# Ensight output
+Ensight output period : 1e-1
+
+# Parameters for a priori testing
+Coarsening factor : 32
+Postproc period :   1e-1

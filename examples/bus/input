@@ -1,0 +1,34 @@
+# Parallelization
+Partition : 4 1 1
+
+# Mesh definition
+Grid resolution : 1
+
+# Source for tracer
+Source height : 1.1
+Source radius : 0.05
+Source passengers : 1 4 7 10 11 16 19 25 31
+
+# Fluid properties
+Density :           1.2
+Dynamic viscosity : 1.8e-5
+
+# Time integration
+Max timestep size :   1e-2
+Max cfl number :      1.0
+Max simulation time : 200
+
+# Pressure solver
+Pressure tolerance : 1e-6
+Pressure iteration : 100
+
+# Implicit velocity solver
+Implicit tolerance : 1e-6
+Implicit iteration : 100
+
+# Various outputs
+Ensight output period : 10
+Restart output period : 60
+
+# Restart from existing data
+Restart from : !restart_200
