@@ -28,3 +28,4 @@ Postproc output period : 0.14
 # Ensight output
 Ensight output period : 1
 
+Restart output period : 1e-2
