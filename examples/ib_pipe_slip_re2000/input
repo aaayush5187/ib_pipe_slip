@@ -2,24 +2,24 @@
 Partition :	8 1 1
 
 # Mesh definition
-Pipe diameter : 1
-Pipe length   : 1
-nx : 256
+Pipe diameter : 0.125
+Pipe length   : 1.9635
+nx : 768
 ny : 64
-nz : 64
+nz : 192
 
 # Pipe properties
 Bulk velocity    :   1
-Fluctuation amp  :   0.2
+Fluctuation amp  :   0.05
 
 # Time integration
 Max timestep size :	0.1
-Max cfl number :	0.9
+Max cfl number :	0.95
 Max time :           1000
 
 
 # Fluid properties
-Dynamic viscosity :  2e-4
+Dynamic viscosity :  2.41e-5
 Density           :  1.0
 
 # Handle postproc

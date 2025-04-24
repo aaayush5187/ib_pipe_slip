@@ -150,44 +150,6 @@ contains
       end block create_sgs
 
 
-      ! Handle restart here
-      perform_restart: block
-         use string,  only: str_medium
-         use filesys, only: makedir,isdir
-         character(len=str_medium) :: filename
-         ! Create event for saving restart files
-         save_evt=event(time,'Restart output')
-         call param_read('Restart output period',save_evt%tper)
-         ! Check if a restart file was provided
-         call param_read('Restart from',filename,default='')
-         restarted=.false.; if (len_trim(filename).gt.0) restarted=.true.
-         ! Restart the simulation
-         if (restarted) then
-            ! Read in the file
-            call df%initialize(pg=cfg,iopartition=[cfg%npx,cfg%npy,cfg%npz],fdata=trim(filename))
-            ! Put the data at the right place
-            call df%pull(name='U',var=fs%U)
-            call df%pull(name='V',var=fs%V)
-            call df%pull(name='W',var=fs%W)
-            call df%pull(name='P',var=fs%P)
-            ! Update cell-centered velocity
-            call fs%interp_vel(Ui,Vi,Wi)
-            ! Update divergence
-            call fs%get_div()
-            ! Also update time
-            call df%pull(name='t' ,val=time%t )
-            call df%pull(name='dt',val=time%dt)
-            time%told=time%t-time%dt
-         else
-            ! Prepare a new directory for storing files for restart
-            if (cfg%amRoot) then
-               if (.not.isdir('restart')) call makedir('restart')
-            end if
-            ! If we are not restarting, we will still need a datafile for saving restart files
-            call df%initialize(pg=cfg,iopartition=[cfg%npx,cfg%npy,cfg%npz],filename=trim(cfg%name),nval=2,nvar=4)
-            df%valname=['dt','t ']; df%varname=['U','V','W','P']
-         end if
-      end block perform_restart
       
       
       ! Add Ensight output
@@ -281,6 +243,7 @@ contains
             fs%V=0.5_WP*(fs%V+fs%Vold)
             fs%W=0.5_WP*(fs%W+fs%Wold)
             
+
             ! Explicit calculation of drho*u/dt from NS
             call fs%get_dmomdt(resU,resV,resW)
             
@@ -378,25 +341,6 @@ contains
          call fs%get_max()
          call mfile%write()
          call cflfile%write()
-
-         ! Finally, see if it's time to save restart files
-         if (save_evt%occurs()) then
-            save_restart: block
-               use string, only: str_medium
-               character(len=str_medium) :: timestamp
-               ! Prefix for files
-               write(timestamp,'(es12.5)') time%t
-               ! Populate df and write it
-               call df%push(name='t' ,val=time%t )
-               call df%push(name='dt',val=time%dt)
-               call df%push(name='U' ,var=fs%U   )
-               call df%push(name='V' ,var=fs%V   )
-               call df%push(name='W' ,var=fs%W   )
-               call df%push(name='P' ,var=fs%P   )
-               call df%write(fdata='restart/data_'//trim(adjustl(timestamp)))
-            end block save_restart
-         end if
-         
       end do
       
    end subroutine simulation_run

@@ -436,7 +436,7 @@ contains
              ibforcing: block
                use ibconfig_class, only: VFhi,VFlo
                integer :: i,j,k
-               real(WP) :: vf,vfy,vol,dudn,delta
+               real(WP) :: vf,vol,dudn,delta
                real(WP) :: Cslip=0.2_WP ! Whitmore, Bose, and Moin
                do k=fs%cfg%kmin_,fs%cfg%kmax_
                   do j=fs%cfg%jmin_,fs%cfg%jmax_

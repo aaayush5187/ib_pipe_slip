@@ -373,7 +373,7 @@ contains
           fs%Wold=fs%W
 
           ! Turbulence modeling
-          sgs_modeling: block
+         sgs_modeling: block
             use sgsmodel_class, only: dynamic_smag
             resU=fs%rho
             call fs%get_gradu(gradU)
@@ -381,10 +381,10 @@ contains
             call fs%get_strainrate(SR)
             call sgs%get_visc(type=dynamic_smag,dt=time%dtold,rho=resU,gradu=gradU,Ui=Ui,Vi=Vi,Wi=Wi,SR=SR)
             !where (cfg%Gib.lt.0.0_WP) sgs%visc=0.0_WP
-            fs%visc=visc+sgs%visc
-          end block sgs_modeling
+            !fs%visc=visc+sgs%visc
+          !end block sgs_modeling
 
-          ! Perform sub-iterations
+          ! Perform sub-iteration
           do while (time%it.le.time%itmax)
 
              ! Build mid-time velocity
@@ -451,46 +451,42 @@ contains
                            vol=(fs%cfg%VF(i  ,j,k)*fs%cfg%vol(i  ,j,k)+&
                                 &    fs%cfg%VF(i-1,j,k)*fs%cfg%vol(i-1,j,k))
                             dudn=-(fs%cfg%VF(i  ,j,k)*fs%cfg%vol(i  ,j,k)*sum(gradU(:,1,i  ,j,k)*cfg%Nib(:,i  ,j,k))+&
-                                &      fs%cfg%VF(i-1,j,k)*fs%cfg%vol(i-1,j,k)*sum(gradU(:,1,i-1,j,k)*cfg%Nib(:,i-1,j,k)))/vol
+                                &      fs%cfg%VF(i-1,j,k)*fs%cfg%vol(i-1,j,k)*sum(gradU(:,1,i-1,j,k)*cfg%Nib(:,i-1,j,k)))/vol     
                            delta=(0.5_WP*vol)**(1.0_WP/3.0_WP)
                            ! Apply IB forcing
                            fs%U(i,j,k)=vf*fs%U(i,j,k)+(1.0_WP-vf)*Cslip*delta*dudn
-                           ! Store IB velocities
-                          Uib(i,j,k)=Cslip*delta*dudn
-                          !print *,vf
+                           ! Store IB velocitie
+                           Uib(i,j,k)=Cslip*delta*dudn
                         end if
                         ! V cell
                         if (fs%vmask(i,j,k).eq.0) then
-                           ! Interpolate VF to face
+                         ! Interpolate VF to face
                            vf=sum(fs%itpr_y(:,i,j,k)*cfg%VF(i,j-1:j,k))
                            ! Skip if not IB cell
                            !if (vf.lt.VFlo.or.vf.gt.VFhi) cycle
-                           ! Apply wall model
-                          ! print *,vf
+                           !Apply wall model
                            vol=(fs%cfg%VF(i,j  ,k)*fs%cfg%vol(i,j  ,k)+&
                                &    fs%cfg%VF(i,j-1,k)*fs%cfg%vol(i,j-1,k))
-                           dudn=-(fs%cfg%VF(i,j  ,k)*fs%cfg%vol(i,j  ,k)*sum(gradU(:,2,i,j  ,k)*cfg%Nib(:,i,j  ,k))+&
+                             dudn=-(fs%cfg%VF(i,j  ,k)*fs%cfg%vol(i,j  ,k)*sum(gradU(:,2,i,j  ,k)*cfg%Nib(:,i,j  ,k))+&
                                &      fs%cfg%VF(i,j-1,k)*fs%cfg%vol(i,j-1,k)*sum(gradU(:,2,i,j-1,k)*cfg%Nib(:,i,j-1,k)))/vol
                            delta=(0.5_WP*vol)**(1.0_WP/3.0_WP)
-                           ! Apply IB forcing
                            fs%V(i,j,k)=vf*fs%V(i,j,k)+(1.0_WP-vf)*Cslip*delta*dudn
-                            !Store IB velocities
+                           !Store IB velocities
                            Vib(i,j,k)=Cslip*delta*dudn
-                           !print *,vf
-                        end if
-                        ! W cell
+                        end if 
+
+                        ! W cell    
                         if (fs%wmask(i,j,k).eq.0) then
-                           ! Interpolate VF to face
+                         ! Interpolate VF to face       
+                         ! Skip if not IB cell
                            vf=sum(fs%itpr_z(:,i,j,k)*cfg%VF(i,j,k-1:k))
-                           ! Skip if not IB cell
-                         !if (vf.lt.VFlo.or.vf.gt.VFhi) cycle
-                           ! Apply wall model
+                           !if (vf.lt.VFlo.or.vf.gt.VFhi) cycle
+                           !Apply wall model
                            vol=(fs%cfg%VF(i,j,k  )*fs%cfg%vol(i,j,k  )+&
                                 &    fs%cfg%VF(i,j,k-1)*fs%cfg%vol(i,j,k-1))
-                           dudn=-(fs%cfg%VF(i,j,k  )*fs%cfg%vol(i,j,k  )*sum(gradU(:,3,i,j,k  )*cfg%Nib(:,i,j,k  ))+&
-                                &      fs%cfg%VF(i,j,k-1)*fs%cfg%vol(i,j,k-1)*sum(gradU(:,3,i,j,k-1)*cfg%Nib(:,i,j,k-1)))/vol
-                           delta=(0.5_WP*vol)**(1.0_WP/3.0_WP)
-                           ! Apply IB forcing
+                            dudn=-(fs%cfg%VF(i,j,k  )*fs%cfg%vol(i,j,k  )*sum(gradU(:,3,i,j,k  )*cfg%Nib(:,i,j,k  ))+&
+                                &      fs%cfg%VF(i,j,k-1)*fs%cfg%vol(i,j,k-1)*sum(gradU(:,3,i,j,k-1)*cfg%Nib(:,i,j,k-1)))/vol    
+                           delta=(0.5_WP*vol)**(1.0_WP/3.0_WP)     
                            fs%W(i,j,k)=vf*fs%W(i,j,k)+(1.0_WP-vf)*Cslip*delta*dudn
                            ! Store IB velocities
                            Wib(i,j,k)=Cslip*delta*dudn
