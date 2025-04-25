@@ -1,0 +1,31 @@
+# Parallelization
+Partition :	8 1 1
+
+# Mesh definition
+Pipe diameter : 0.125
+Pipe length   : 1.9635
+nx : 768
+ny : 64
+nz : 64
+
+# Pipe properties
+Bulk velocity    :   1
+Fluctuation amp  :   0.05
+
+# Time integration
+Max timestep size :	0.01
+Max cfl number :	0.95
+Max time :           1000
+
+
+# Fluid properties
+Dynamic viscosity :  2.41e-5
+Density           :  1.0
+
+# Handle postproc
+Postproc output period : 0.01
+
+# Ensight output
+Ensight output period : 0.01
+
+Restart output period : 0.01
